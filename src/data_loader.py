@@ -1,5 +1,11 @@
 """
 Загрузка данных SPARC.
+
+Формат файлов:
+- Каждый файл .dat содержит кривую вращения одной галактики
+- Имя файла = имя галактики (например, NGC3198.dat)
+- Столбцы: Rad, Vobs, errV, Vgas, Vdisk, Vbul, SBdisk, SBbul
+- Строки с # — комментарии
 """
 
 import os
@@ -7,22 +13,7 @@ import numpy as np
 import pandas as pd
 
 
-def load_sparc_catalog(data_dir='data/raw'):
-    """
-    Загружает основной каталог SPARC (data.csv).
-    
-    Returns
-    -------
-    catalog : pd.DataFrame
-        Каталог галактик с параметрами
-    """
-    path = os.path.join(data_dir, 'data.csv')
-    # SPARC использует пробелы как разделители
-    catalog = pd.read_csv(path, sep=',')  # или sep='\s+' если нужно
-    return catalog
-
-
-def load_rotation_curve(galaxy_name, data_dir='data/raw'):
+def load_rotation_curve(galaxy_name, data_dir='data/raw/SPARC'):
     """
     Загружает кривую вращения для конкретной галактики.
     
@@ -36,19 +27,56 @@ def load_rotation_curve(galaxy_name, data_dir='data/raw'):
     Returns
     -------
     data : dict
-        Словарь с массивами: r, v_obs, v_err, v_star, v_gas
+        Словарь с массивами:
+        - r: радиус (кпк)
+        - v_obs: наблюдаемая скорость (км/с)
+        - v_err: погрешность (км/с)
+        - v_gas: вклад газа (км/с)
+        - v_disk: вклад диска (км/с)
+        - v_bul: вклад балджа (км/с)
+        - v_visible: полная видимая скорость (км/с)
     """
-    # Файлы в SPARC называются типа RC_GC_data.dat
-    # Точное имя нужно будет уточнить после скачивания данных
-    path = os.path.join(data_dir, f'{galaxy_name}', 'RC_GC_data.dat')
+    path = os.path.join(data_dir, f'{galaxy_name}.dat')
     
-    # Формат: R Vobs Vobs_err Vstar Vgas (и другие столбцы)
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"Файл не найден: {path}")
+    
+    # Загружаем данные (пропускаем строки с #)
     data_raw = np.loadtxt(path, comments='#')
     
+    # Извлекаем столбцы
+    r = data_raw[:, 0]           # радиус (кпк)
+    v_obs = data_raw[:, 1]       # наблюдаемая скорость (км/с)
+    v_err = data_raw[:, 2]       # погрешность
+    v_gas = data_raw[:, 3]       # вклад газа
+    v_disk = data_raw[:, 4]      # вклад диска
+    v_bul = data_raw[:, 5]       # вклад балджа
+    
+    # Видимая скорость = sqrt(v_gas^2 + v_disk^2 + v_bul^2)
+    v_visible = np.sqrt(v_gas**2 + v_disk**2 + v_bul**2)
+    
     return {
-        'r': data_raw[:, 0],       # радиус (кпк)
-        'v_obs': data_raw[:, 1],   # наблюдаемая скорость (км/с)
-        'v_err': data_raw[:, 2],   # погрешность
-        'v_star': data_raw[:, 3],  # вклад звёзд
-        'v_gas': data_raw[:, 4],   # вклад газа
+        'r': r,
+        'v_obs': v_obs,
+        'v_err': v_err,
+        'v_gas': v_gas,
+        'v_disk': v_disk,
+        'v_bul': v_bul,
+        'v_visible': v_visible,
     }
+
+
+def list_galaxies(data_dir='data/raw/SPARC'):
+    """
+    Возвращает список всех галактик в базе SPARC.
+    
+    Returns
+    -------
+    galaxies : list
+        Список имён галактик (без расширения .dat)
+    """
+    if not os.path.exists(data_dir):
+        raise FileNotFoundError(f"Папка не найдена: {data_dir}")
+    
+    files = [f.replace('.dat', '') for f in os.listdir(data_dir) if f.endswith('.dat')]
+    return sorted(files)

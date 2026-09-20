@@ -27,6 +27,7 @@ ENV/
 *~
 
 # Данные (они большие и не нужны в git)
+data/raw/
 data/raw/*.dat
 data/raw/*.csv
 data/processed/*.csv
@@ -41,6 +42,7 @@ results/figures/*.jpg
 results/tables/*.csv
 !results/figures/.gitkeep
 !results/tables/.gitkeep
+results/article/
 
 # OS файлы
 .DS_Store
