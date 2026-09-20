@@ -1,0 +1,19 @@
+# Научные вычисления
+numpy<2.0
+scipy>=1.10.0
+pandas>=2.0.0
+
+# Визуализация
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Астрономия
+astropy>=5.3.0
+
+# Jupyter
+jupyter>=1.0.0
+ipykernel>=6.25.0
+
+# Анализ данных
+scikit-learn>=1.3.0
+statsmodels>=0.14.0
