@@ -4,7 +4,7 @@
 
 Проверка гипотезы об упругом пространстве-времени как альтернативы гипотезе тёмной материи через анализ кривых вращения галактик.
 
-Научный проект для конференции "Большие вызовы" (2026).
+
 
 ## Основная идея
 
@@ -54,22 +54,3 @@ $$v^2(r) = v_{\text{visible}}^2(r) + v_0^2 \left(1 - e^{-r/r_t}\right)$$
 
 Данные помещаются в папку `data/raw/SPARC/` (не включены в репозиторий из-за размера).
 
-## Установка
-
-```bash
-# Клонируем репозиторий
-git clone https://github.com/ТВОЙ_ЛОГИН/elastic-spacetime.git
-cd elastic-spacetime
-
-# Создаём виртуальное окружение
-python -m venv venv
-
-# Активируем (Windows PowerShell)
-venv\Scripts\Activate.ps1
-
-# Linux/Mac:
-# source venv/bin/activate
-
-# Устанавливаем зависимости
-pip install --upgrade pip
-pip install -r requirements.txt
